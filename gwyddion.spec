@@ -8,6 +8,9 @@
 %define libgwyprocess %mklibname gwyprocess %{api} %{major}
 %define devname %mklibname %{name} %{api} -d
 
+%bcond_with thumbnailer-gconf
+%bcond_with thumbnailer-kde4
+
 Summary:	A SPM (scanning probe microscopy) data visualization and analysis tool
 Name:		gwyddion
 Version:	2.53
@@ -26,7 +29,6 @@ BuildRequires:	ruby
 BuildRequires:	bzip2-devel
 BuildRequires:	cfitsio-devel
 BuildRequires:	intltool
-BuildRequires:	kdelibs-devel > 4
 BuildRequires:	pkgconfig(fftw3)
 BuildRequires:	pkgconfig(gconf-2.0)
 BuildRequires:	pkgconfig(gl)
@@ -48,13 +50,13 @@ BuildRequires:	pkgconfig(unique-1.0)
 BuildRequires:	pkgconfig(xmu)
 BuildRequires:	pkgconfig(zlib)
 BuildRequires:	pythonegg(numpy)
-
 BuildRequires:	epydoc
 BuildRequires:	gtk-doc
-#BuildRequires:	fpc #-base
+%if %{with thumbnailer-kde4}
+BuildRequires:	kdelibs-devel > 4
+%endif
 
 %description
-# adapted from the homepage
 Gwyddion is a modular program for SPM (scanning probe microscopy) data
 visualization and analysis. Primarily it is intended for analysis of height
 fields obtained by scanning probe microscopy techniques (AFM, MFM, STM,
@@ -197,6 +199,7 @@ programming languages.
 
 #----------------------------------------------------------------------------
 
+%if %{with thumbnailer-gconf}
 %package thumbnailer-gconf
 Summary:	GConf schemas for gwyddion-thumbnailer integration
 Group:		Graphical desktop/GNOME
@@ -208,9 +211,11 @@ in GNOME and XFce.
 
 %files thumbnailer-gconf
 %config(noreplace) %{_sysconfdir}/gconf/schemas/gwyddion-thumbnailer.schemas
+%endif
 
 #----------------------------------------------------------------------------
 
+%if %{with thumbnailer-kde4}
 %package thumbnailer-kde4
 Summary:	KDE4 gwyddion thumbnailer module
 Group:		Graphical desktop/KDE
@@ -222,6 +227,7 @@ files.
 
 %files thumbnailer-kde4
 %{_libdir}/kde4/gwythumbcreator.so
+%endif
 
 #----------------------------------------------------------------------------
 
