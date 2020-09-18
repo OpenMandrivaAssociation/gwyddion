@@ -14,7 +14,7 @@
 Summary:	A SPM (scanning probe microscopy) data visualization and analysis tool
 Name:		gwyddion
 Version:	2.53
-Release:	1
+Release:	2
 License:	GPLv2+
 Group:		Sciences/Physics
 URL:		http://gwyddion.net/
@@ -27,7 +27,7 @@ Patch1:		gwyddion-2.53-ensure-osx-basedir.patch
 
 BuildRequires:	ruby
 BuildRequires:	bzip2-devel
-BuildRequires:	cfitsio-devel
+BuildRequires:	pkgconfig(cfitsio)
 BuildRequires:	intltool
 BuildRequires:	pkgconfig(fftw3)
 BuildRequires:	pkgconfig(gconf-2.0)
