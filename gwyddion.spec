@@ -1,34 +1,37 @@
 %define major 0
 %define api 2
-%define libname %mklibname %{name} %{api} %{major}
-%define libgwyapp %mklibname gwyapp %{api} %{major}
-%define libgwydgets %mklibname gwydgets %{api} %{major}
-%define libgwydraw %mklibname gwydraw %{api} %{major}
-%define libgwymodule %mklibname gwymodule %{api} %{major}
-%define libgwyprocess %mklibname gwyprocess %{api} %{major}
-%define devname %mklibname %{name} %{api} -d
 
-%bcond_with thumbnailer-gconf
-%bcond_with thumbnailer-kde4
+%define libname			%mklibname %{name} %{api} %{major}
+%define devname			%mklibname %{name} %{api} -d
+%define libgwyapp		%mklibname gwyapp %{api} %{major}
+%define libgwydgets		%mklibname gwydgets %{api} %{major}
+%define libgwydraw		%mklibname gwydraw %{api} %{major}
+%define libgwymodule	%mklibname gwymodule %{api} %{major}
+%define libgwyprocess	%mklibname gwyprocess %{api} %{major}
+
+%bcond_without	doc
+%bcond_with		doc_pdf
+%bcond_with		python
+%bcond_with		thumbnailer_gconf
+%bcond_with		thumbnailer_kde4
 
 Summary:	A SPM (scanning probe microscopy) data visualization and analysis tool
 Name:		gwyddion
-Version:	2.53
-Release:	2
+Version:	2.59
+Release:	1
 License:	GPLv2+
 Group:		Sciences/Physics
 URL:		http://gwyddion.net/
 Source0:	https://downloads.sourceforge.net/%{name}/%{name}-%{version}.tar.xz
 Source1:	https://downloads.sourceforge.net/%{name}/%{name}-%{version}.tar.xz.sig
 # (upstream) http://gwyddion.net/download/2.53/gwyddion-2.53-gcc9-openmp-shared-const.patch
-Patch0:		gwyddion-2.53-gcc9-openmp-shared-const.patch
-# (upstream) http://gwyddion.net/download/2.53/gwyddion-2.53-ensure-osx-basedir.patch
-Patch1:		gwyddion-2.53-ensure-osx-basedir.patch
+#Patch0:		gwyddion-2.53-gcc9-openmp-shared-const.patch
 
 BuildRequires:	ruby
-BuildRequires:	bzip2-devel
-BuildRequires:	pkgconfig(cfitsio)
 BuildRequires:	intltool
+BuildRequires:	hdf5-devel
+BuildRequires:	pkgconfig(bzip2)
+BuildRequires:	pkgconfig(cfitsio)
 BuildRequires:	pkgconfig(fftw3)
 BuildRequires:	pkgconfig(gconf-2.0)
 BuildRequires:	pkgconfig(gl)
@@ -36,6 +39,7 @@ BuildRequires:	pkgconfig(glib-2.0)
 BuildRequires:	pkgconfig(gtk+-2.0)
 BuildRequires:	pkgconfig(gtkglext-1.0)
 BuildRequires:	pkgconfig(gtksourceview-2.0)
+BuildRequires:	pkgconfig(jansson)
 BuildRequires:	pkgconfig(IlmBase)
 BuildRequires:	pkgconfig(libpng)
 BuildRequires:	pkgconfig(libtiff-4)
@@ -44,16 +48,24 @@ BuildRequires:	pkgconfig(libxml-2.0)
 BuildRequires:	pkgconfig(minizip)
 BuildRequires:	pkgconfig(OpenEXR)
 BuildRequires:	pkgconfig(pango)
-BuildRequires:	pkgconfig(python2)
-BuildRequires:	pkgconfig(pygtk-2.0)
 BuildRequires:	pkgconfig(unique-1.0)
 BuildRequires:	pkgconfig(xmu)
 BuildRequires:	pkgconfig(zlib)
-BuildRequires:	pythonegg(numpy)
+%if %{with python}
 BuildRequires:	epydoc
+BuildRequires:	python2dist(numpy)
+BuildRequires:	pkgconfig(python2)
+BuildRequires:	pkgconfig(pygtk-2.0)
+%endif
+%if %{with doc}
 BuildRequires:	gtk-doc
-%if %{with thumbnailer-kde4}
-BuildRequires:	kdelibs-devel > 4
+%endif
+%if %{with doc_pdf}
+BuildRequires:	gtk-doc-mkpdf
+%endif
+%if %{with thumbnailer_kde4}
+BuildRequires:	pkgconfig(Qt5Core)
+#kdelibs-devel > 4
 %endif
 
 %description
@@ -82,8 +94,11 @@ Its graphical user interface is based on Gtk+.
 %{_libdir}/%{name}/modules/
 %{_datadir}/applications/%{name}.desktop
 %{_datadir}/mime/packages/%{name}.xml
+%{_metainfodir}/net.gwyddion.Gwyddion.appdata.xml
 %{_datadir}/thumbnailers/gwyddion.thumbnailer
+%if %{with python}
 %{python2_sitearch}/gwy.so
+%endif
 
 #----------------------------------------------------------------------------
 
@@ -186,68 +201,80 @@ programming languages.
 %doc devel-docs/CODING-STANDARDS
 %doc data/%{name}.vim
 %{_includedir}/%{name}/
+%if %{with doc}
 %{_datadir}/gtk-doc/html/*
-%{_datadir}/gtksourceview-2.0/language-specs/pygwy.lang
+%endif
 %{_libdir}/*.so
 %{_libdir}/pkgconfig/gwyddion.pc
 %{_libdir}/%{name}/include/gwyconfig.h
 # Plug-ins and plug-in devel stuff
+%{_docdir}/%{name}/plugins/
 %{_libdir}/%{name}/perl/
-%{_libdir}/%{name}/python/
 %{_libdir}/%{name}/ruby/
 %{_libexecdir}/%{name}/plugins/
+%if %{with python}
+%{_libdir}/%{name}/python/
+%{_datadir}/gtksourceview-2.0/language-specs/pygwy.lang
+%endif
 
 #----------------------------------------------------------------------------
 
-%if %{with thumbnailer-gconf}
-%package thumbnailer-gconf
+%if %{with thumbnailer_gconf}
+%package thumbnailer_gconf
 Summary:	GConf schemas for gwyddion-thumbnailer integration
 Group:		Graphical desktop/GNOME
 Requires:	%{name} = %{EVRD}
 
-%description thumbnailer-gconf
+%description thumbnailer_gconf
 GConf schemas that register gwyddion-thumbnailer as thumbnailer for SPM files
 in GNOME and XFce.
 
-%files thumbnailer-gconf
+%files thumbnailer_gconf
 %config(noreplace) %{_sysconfdir}/gconf/schemas/gwyddion-thumbnailer.schemas
 %endif
 
 #----------------------------------------------------------------------------
 
-%if %{with thumbnailer-kde4}
-%package thumbnailer-kde4
+%if %{with thumbnailer_kde4}
+%package thumbnailer_kde4
 Summary:	KDE4 gwyddion thumbnailer module
 Group:		Graphical desktop/KDE
 Requires:	%{name} = %{EVRD}
 
-%description thumbnailer-kde4
+%description thumbnailer_kde4
 Gwyddion-thumbnailer based KDE thumbnail creator extension module for SPM
 files.
 
-%files thumbnailer-kde4
+%files thumbnailer_kde4
 %{_libdir}/kde4/gwythumbcreator.so
 %endif
 
 #----------------------------------------------------------------------------
 
 %prep
-%setup -q
-%autopatch -p1
+%autosetup
 
 %build
-export PYTHON=%{__python2}
+%if %{with python}
+export PYTHON=%{__python3}
+%endif
 
-autoreconf -ifv
+autoreconf -fiv
 %configure \
-	--enable-pygwy \
-	--with-kde4-thumbnailer \
-	--enable-gtk-doc \
-	--enable-library-bloat
+	--enable-library-bloat \
+	--%{?with_doc:en}%{!?with_doc:dis}able-gtk-doc-html \
+	--%{?with_doc_pdf:en}%{!?with_doc_pdf:dis}able-gtk-doc-pdf \
+	--%{?with_python:en}%{!?with_python:dis}able-pygwy \
+	--with%{!?with_thumbnailer_kde4:out}-kde4-thumbnailer \
+	--with%{!?with_python:out}-python \
+	%{nil}
 %make_build
 
 %install
 %make_install
+
+# add plugins path
+install -dm 0755 %{buildroot}%{_libexecdir}/%{name}/plugins/
 
 # fix .desktop
 desktop-file-edit \
@@ -256,8 +283,9 @@ desktop-file-edit \
  	--add-category="Education" \
 	%{buildroot}%{_datadir}/applications/%{name}.desktop
 
-# localizations
-%find_lang %{name}
-
 # Perl, Python, and Ruby modules are private, remove the Perl man page.
 rm -f %{buildroot}%{_mandir}/man3/Gwyddion::dump.*
+
+# locales
+%find_lang %{name}
+
