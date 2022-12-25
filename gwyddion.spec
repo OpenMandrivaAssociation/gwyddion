@@ -17,7 +17,7 @@
 
 Summary:	A SPM (scanning probe microscopy) data visualization and analysis tool
 Name:		gwyddion
-Version:	2.61
+Version:	2.62
 Release:	1
 License:	GPLv2+
 Group:		Sciences/Physics
