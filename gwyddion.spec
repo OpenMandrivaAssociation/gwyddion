@@ -11,7 +11,7 @@
 
 %bcond_without	doc
 %bcond_without	doc_pdf
-%bcond_without	python
+%bcond_with		python
 %bcond_with		thumbnailer_gconf
 %bcond_with		thumbnailer_kde45
 
