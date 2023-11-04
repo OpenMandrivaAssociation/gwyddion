@@ -13,7 +13,7 @@
 %bcond_without	doc_pdf
 %bcond_with		python
 %bcond_with		thumbnailer_gconf
-%bcond_with		thumbnailer_kde45
+%bcond_with		thumbnailer_kde4
 
 Summary:	A SPM (scanning probe microscopy) data visualization and analysis tool
 Name:		gwyddion
@@ -24,12 +24,11 @@ Group:		Sciences/Physics
 URL:		http://gwyddion.net/
 Source0:	https://downloads.sourceforge.net/%{name}/%{name}-%{version}.tar.xz
 Source1:	https://downloads.sourceforge.net/%{name}/%{name}-%{version}.tar.xz.sig
-# (upstream) http://gwyddion.net/download/2.53/gwyddion-2.53-gcc9-openmp-shared-const.patch
-#Patch0:		gwyddion-2.53-gcc9-openmp-shared-const.patch
 
 BuildRequires:	ruby
 BuildRequires:	intltool
 BuildRequires:	hdf5-devel
+BuildRequires:	ilmbase-devel
 BuildRequires:	inkscape
 BuildRequires:	pngcrush
 BuildRequires:	pkgconfig(bzip2)
@@ -43,7 +42,6 @@ BuildRequires:	pkgconfig(gtk+-2.0)
 BuildRequires:	pkgconfig(gtkglext-1.0)
 BuildRequires:	pkgconfig(gtksourceview-2.0)
 BuildRequires:	pkgconfig(jansson)
-BuildRequires:	pkgconfig(IlmBase)
 BuildRequires:	pkgconfig(libpng)
 BuildRequires:	pkgconfig(libtiff-4)
 BuildRequires:	pkgconfig(libzip)
@@ -66,7 +64,7 @@ BuildRequires:	gtk-doc
 %if %{with doc_pdf}
 BuildRequires:	gtk-doc-mkpdf
 %endif
-%if %{with thumbnailer_kde45}
+%if %{with thumbnailer_kde4}
 BuildRequires:	pkgconfig(Qt5Core)
 #kdelibs-devel > 4
 %endif
@@ -238,18 +236,18 @@ in GNOME and XFce.
 
 #----------------------------------------------------------------------------
 
-%if %{with thumbnailer_kde45}
-%package thumbnailer_kde45
-Summary:	kde45 gwyddion thumbnailer module
+%if %{with thumbnailer_kde4}
+%package thumbnailer_kde4
+Summary:	kde4 gwyddion thumbnailer module
 Group:		Graphical desktop/KDE
 Requires:	%{name} = %{EVRD}
 
-%description thumbnailer_kde45
+%description thumbnailer_kde4
 Gwyddion-thumbnailer based KDE thumbnail creator extension module for SPM
 files.
 
-%files thumbnailer_kde45
-%{_libdir}/kde45/gwythumbcreator.so
+%files thumbnailer_kde4
+%{_libdir}/kde4/gwythumbcreator.so
 %endif
 
 #----------------------------------------------------------------------------
@@ -268,7 +266,7 @@ autoreconf -fiv
 	--%{?with_doc:en}%{!?with_doc:dis}able-gtk-doc-html \
 	--%{?with_doc_pdf:en}%{!?with_doc_pdf:dis}able-gtk-doc-pdf \
 	--%{?with_python:en}%{!?with_python:dis}able-pygwy \
-	--with%{!?with_thumbnailer_kde45:out}-kde45-thumbnailer \
+	--with%{!?with_thumbnailer_kde4:out}-kde4-thumbnailer \
 	--with%{!?with_python:out}-python \
 	%{nil}
 %make_build
