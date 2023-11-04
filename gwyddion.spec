@@ -10,14 +10,14 @@
 %define libgwyprocess	%mklibname gwyprocess %{api} %{major}
 
 %bcond_without	doc
-%bcond_with		doc_pdf
-%bcond_with		python
+%bcond_without	doc_pdf
+%bcond_without	python
 %bcond_with		thumbnailer_gconf
-%bcond_with		thumbnailer_kde4
+%bcond_with		thumbnailer_kde45
 
 Summary:	A SPM (scanning probe microscopy) data visualization and analysis tool
 Name:		gwyddion
-Version:	2.63
+Version:	2.64
 Release:	1
 License:	GPLv2+
 Group:		Sciences/Physics
@@ -30,6 +30,8 @@ Source1:	https://downloads.sourceforge.net/%{name}/%{name}-%{version}.tar.xz.sig
 BuildRequires:	ruby
 BuildRequires:	intltool
 BuildRequires:	hdf5-devel
+BuildRequires:	inkscape
+BuildRequires:	pngcrush
 BuildRequires:	pkgconfig(bzip2)
 BuildRequires:	pkgconfig(cfitsio)
 BuildRequires:	pkgconfig(fftw3)
@@ -64,7 +66,7 @@ BuildRequires:	gtk-doc
 %if %{with doc_pdf}
 BuildRequires:	gtk-doc-mkpdf
 %endif
-%if %{with thumbnailer_kde4}
+%if %{with thumbnailer_kde45}
 BuildRequires:	pkgconfig(Qt5Core)
 #kdelibs-devel > 4
 %endif
@@ -236,18 +238,18 @@ in GNOME and XFce.
 
 #----------------------------------------------------------------------------
 
-%if %{with thumbnailer_kde4}
-%package thumbnailer_kde4
-Summary:	KDE4 gwyddion thumbnailer module
+%if %{with thumbnailer_kde45}
+%package thumbnailer_kde45
+Summary:	kde45 gwyddion thumbnailer module
 Group:		Graphical desktop/KDE
 Requires:	%{name} = %{EVRD}
 
-%description thumbnailer_kde4
+%description thumbnailer_kde45
 Gwyddion-thumbnailer based KDE thumbnail creator extension module for SPM
 files.
 
-%files thumbnailer_kde4
-%{_libdir}/kde4/gwythumbcreator.so
+%files thumbnailer_kde45
+%{_libdir}/kde45/gwythumbcreator.so
 %endif
 
 #----------------------------------------------------------------------------
@@ -266,7 +268,7 @@ autoreconf -fiv
 	--%{?with_doc:en}%{!?with_doc:dis}able-gtk-doc-html \
 	--%{?with_doc_pdf:en}%{!?with_doc_pdf:dis}able-gtk-doc-pdf \
 	--%{?with_python:en}%{!?with_python:dis}able-pygwy \
-	--with%{!?with_thumbnailer_kde4:out}-kde4-thumbnailer \
+	--with%{!?with_thumbnailer_kde45:out}-kde45-thumbnailer \
 	--with%{!?with_python:out}-python \
 	%{nil}
 %make_build
