@@ -56,8 +56,8 @@ BuildRequires:	pkgconfig(xmu)
 BuildRequires:	pkgconfig(zlib)
 %if %{with python}
 BuildRequires:	epydoc
-BuildRequires:	python2dist(numpy)
-BuildRequires:	pkgconfig(python2)
+BuildRequires:	python%{pyver}dist(numpy)
+BuildRequires:	pkgconfig(python3)
 BuildRequires:	pkgconfig(pygtk-2.0)
 %endif
 %if %{with doc}
