@@ -21,7 +21,7 @@ Version:	2.66
 Release:	1
 License:	GPLv2+
 Group:		Sciences/Physics
-URL:		http://gwyddion.net/
+URL:		https://gwyddion.net/
 Source0:	https://downloads.sourceforge.net/%{name}/%{name}-%{version}.tar.xz
 Source1:	https://downloads.sourceforge.net/%{name}/%{name}-%{version}.tar.xz.sig
 
